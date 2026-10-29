@@ -1,0 +1,1165 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lista ✦ Meu Universo</title>
+
+<style>
+:root {
+  --accent: #a855f7;
+  --accent2: #ec4899;
+  --bg: #080817;
+  --panel: rgba(17, 17, 39, .91);
+  --panel2: rgba(35, 27, 65, .87);
+  --text: #f8f5ff;
+  --muted: #b9b2d4;
+  --border: rgba(177, 140, 255, .27);
+  --good: #55e6b2;
+  --danger: #fb7185;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", Arial, sans-serif;
+  transition: background .4s, color .3s;
+}
+
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--accent2);
+  outline-offset: 3px;
+}
+
+/* FUNDOS TEMÁTICOS */
+body.theme-purple {
+  --bg: #080817;
+  --panel: rgba(17, 17, 39, .91);
+  --panel2: rgba(35, 27, 65, .87);
+  --border: rgba(177, 140, 255, .27);
+}
+
+body.theme-sky {
+  --bg: #041323;
+  --panel: rgba(8, 31, 57, .93);
+  --panel2: rgba(13, 48, 79, .9);
+  --border: rgba(82, 180, 255, .35);
+  --accent: #258bff;
+  --accent2: #52d8ff;
+}
+
+body.theme-heart {
+  --bg: #200b20;
+  --panel: rgba(49, 15, 43, .93);
+  --panel2: rgba(77, 23, 59, .9);
+  --border: rgba(255, 126, 189, .34);
+  --accent: #ff4fa3;
+  --accent2: #ff9acb;
+}
+
+body.theme-universe {
+  --bg: #09051d;
+  --panel: rgba(24, 14, 53, .94);
+  --panel2: rgba(47, 24, 80, .9);
+  --border: rgba(180, 128, 255, .35);
+  --accent: #8b5cf6;
+  --accent2: #43d9ff;
+}
+
+body.theme-rose {
+  --bg: #260e21;
+  --panel: rgba(57, 23, 47, .94);
+  --panel2: rgba(82, 32, 65, .9);
+  --border: rgba(255, 167, 204, .34);
+  --accent: #ed5fa8;
+  --accent2: #ffb2d5;
+}
+
+body.theme-black {
+  --bg: #080808;
+  --panel: rgba(21, 21, 21, .96);
+  --panel2: rgba(39, 39, 39, .94);
+  --border: rgba(255, 255, 255, .16);
+  --accent: #c5a3ff;
+  --accent2: #f5f5f5;
+}
+
+body.light {
+  --bg: #f3efff;
+  --panel: rgba(255, 255, 255, .96);
+  --panel2: #e9e1fa;
+  --text: #26163b;
+  --muted: #70617f;
+  --border: #d8c7f2;
+}
+
+body.light .sidebar { background: rgba(247, 243, 255, .96); }
+body.light .field,
+body.light input,
+body.light select,
+body.light textarea { background: rgba(255,255,255,.95); color: var(--text); }
+body.light .budget-card { color: white; }
+body.light .budget-card p,
+body.light .budget-card .budget-row { color: #eee; }
+
+#backgroundDecor {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.decor {
+  position: absolute;
+  opacity: .65;
+  animation: float 8s ease-in-out infinite;
+  user-select: none;
+}
+
+.glow {
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  filter: blur(100px);
+  background: var(--accent);
+  opacity: .12;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 235px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.sidebar {
+  padding: 23px 15px;
+  border-right: 1px solid var(--border);
+  background: rgba(5, 5, 18, .83);
+  backdrop-filter: blur(18px);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.brand { display: flex; align-items: center; gap: 12px; padding: 0 7px 12px; }
+.brand-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  box-shadow: 0 0 26px color-mix(in srgb, var(--accent) 40%, transparent);
+  font-size: 26px;
+}
+.brand h1 { margin: 0; font-size: 25px; }
+.brand p { margin: 4px 0 0; font-size: 11px; color: var(--muted); }
+
+.nav-title {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 2px;
+  margin: 8px 9px;
+  text-transform: uppercase;
+}
+
+.nav-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px;
+  margin-bottom: 4px;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid transparent;
+  border-radius: 11px;
+  text-align: left;
+  transition: .2s;
+}
+.nav-item:hover, .nav-item.active {
+  color: var(--text);
+  background: linear-gradient(100deg, var(--accent)28, var(--accent2)12);
+  border-color: var(--border);
+  transform: translateX(3px);
+}
+.nav-count { margin-left: auto; font-size: 11px; }
+.nav-icon { font-size: 18px; width: 22px; }
+
+.quote {
+  margin-top: auto;
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.main { padding: 24px; min-width: 0; }
+
+.topbar { display: flex; gap: 10px; align-items: center; margin-bottom: 28px; }
+.search { flex: 1; min-width: 0; }
+
+input, select, textarea {
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+}
+input::placeholder, textarea::placeholder { color: var(--muted); }
+select option { background: var(--panel); color: var(--text); }
+
+.btn {
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  padding: 11px 14px;
+  background: var(--panel2);
+  color: var(--text);
+  transition: transform .2s, filter .2s;
+}
+.btn:hover { transform: translateY(-2px); filter: brightness(1.15); }
+.btn-primary {
+  background: linear-gradient(120deg, var(--accent), var(--accent2));
+  border: 0;
+  color: white;
+  box-shadow: 0 5px 22px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+.btn-danger { color: var(--danger); }
+
+.welcome {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 23px;
+  animation: appear .5s ease both;
+}
+.eyebrow { font-size: 10px; letter-spacing: 2px; color: var(--accent2); font-weight: bold; }
+.welcome h2 { font-size: clamp(25px, 3vw, 36px); margin: 10px 0; overflow-wrap: anywhere; }
+.welcome p { color: var(--muted); margin: 0; }
+.date-pill { padding: 12px; border: 1px solid var(--border); background: var(--panel); border-radius: 12px; color: var(--muted); font-size: 12px; }
+
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; margin-bottom: 20px; }
+.stat {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: var(--panel);
+  backdrop-filter: blur(12px);
+  animation: appear .6s ease both;
+  transition: transform .25s, border-color .25s;
+}
+.stat:hover { transform: translateY(-4px); border-color: var(--accent); }
+.stat-icon { font-size: 22px; margin-bottom: 9px; }
+.stat-label { font-size: 12px; color: var(--muted); }
+.stat-number { font-size: 26px; font-weight: 750; margin: 8px 0; overflow-wrap: anywhere; }
+.stat-foot { color: var(--muted); font-size: 11px; }
+
+.workspace { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 17px; align-items: start; }
+.panel { min-width: 0; padding: 18px; border: 1px solid var(--border); border-radius: 16px; background: var(--panel); backdrop-filter: blur(14px); }
+.panel-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 17px; }
+.panel-heading h3 { margin: 0; font-size: 18px; }
+.panel-heading p { margin: 6px 0 0; color: var(--muted); font-size: 12px; }
+.actions { display: flex; flex-wrap: wrap; gap: 7px; }
+
+.filters { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 15px; }
+.stack { display: grid; gap: 9px; }
+.item {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  background: var(--panel2);
+  animation: appear .3s ease both;
+  transition: border-color .2s, transform .2s;
+}
+.item:hover { border-color: var(--accent); transform: translateY(-2px); }
+.item-row { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.item-info { flex: 1; min-width: 0; }
+.item-name { font-weight: 650; overflow-wrap: anywhere; }
+.item-meta { color: var(--muted); font-size: 11px; margin-top: 5px; overflow-wrap: anywhere; }
+.item-total { text-align: right; font-size: 12px; font-weight: bold; white-space: nowrap; }
+.item-total small { display: block; color: var(--muted); font-weight: normal; margin-top: 4px; }
+.item-actions { display: flex; gap: 2px; }
+.icon-btn { border: 0; background: transparent; color: var(--muted); padding: 7px; border-radius: 7px; }
+.icon-btn:hover { background: var(--accent); color: white; }
+.check { width: 21px; height: 21px; accent-color: var(--accent); flex-shrink: 0; }
+.item.done .item-name { text-decoration: line-through; color: var(--muted); }
+
+.empty { padding: 35px 12px; text-align: center; color: var(--muted); line-height: 1.8; }
+.empty span { display: block; font-size: 35px; margin-bottom: 10px; }
+
+.right { display: grid; gap: 14px; }
+.budget-card { background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 35%, var(--panel)), var(--panel)); }
+.budget-value { font-size: 27px; font-weight: 800; margin: 14px 0; overflow-wrap: anywhere; }
+.track { height: 8px; border-radius: 20px; background: #ffffff22; overflow: hidden; margin: 15px 0 10px; }
+.bar { width: 0; height: 100%; border-radius: 20px; background: linear-gradient(90deg, var(--good), var(--accent)); transition: width .5s; }
+.budget-row { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; color: var(--muted); margin-top: 8px; }
+.quick {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px;
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  color: var(--text);
+  text-align: left;
+  transition: .2s;
+}
+.quick:hover { border-color: var(--accent); transform: translateX(3px); }
+.quick-icon { font-size: 22px; }
+.quick small { display: block; color: var(--muted); margin-top: 4px; font-size: 11px; }
+.note { font-size: 12px; color: var(--muted); line-height: 1.7; }
+
+footer { text-align: center; color: var(--muted); font-size: 11px; margin: 25px 0 5px; }
+
+/* JANELAS */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  padding: 18px;
+  background: #000b;
+  backdrop-filter: blur(9px);
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+}
+.overlay.open { display: flex; animation: fade .2s ease; }
+.modal {
+  width: min(100%, 460px);
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--panel);
+  box-shadow: 0 25px 100px #0008;
+  animation: modalIn .25s ease;
+}
+.modal h3 { margin: 0 0 18px; font-size: 23px; }
+.modal p { color: var(--muted); line-height: 1.6; font-size: 13px; }
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; color: var(--muted); font-size: 12px; margin-bottom: 7px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+.color-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.theme-choice {
+  padding: 9px 5px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel2);
+  color: var(--text);
+  font-size: 11px;
+  transition: .2s;
+}
+.theme-choice:hover, .theme-choice.selected { border-color: var(--accent); transform: translateY(-2px); }
+.theme-preview { display: block; height: 48px; border-radius: 8px; margin-bottom: 8px; }
+.theme-purple-preview { background: radial-gradient(circle at 80% 10%, #9d4edd, #090817 70%); }
+.theme-sky-preview { background: radial-gradient(circle at 70% 15%, #52d8ff, #041323 65%); }
+.theme-heart-preview { background: radial-gradient(circle at 50% 40%, #ff4fa3, #200b20 70%); }
+.theme-universe-preview { background: radial-gradient(circle at 40% 30%, #8b5cf6, #09051d 70%); }
+.theme-rose-preview { background: linear-gradient(135deg, #ffb2d5, #4d173b); }
+.theme-black-preview { background: linear-gradient(135deg, #444, #080808); }
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 50;
+  padding: 13px 17px;
+  border-radius: 12px;
+  border: 1px solid var(--accent);
+  background: var(--panel2);
+  color: var(--text);
+  box-shadow: 0 10px 40px #0005;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: .25s;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+@keyframes float { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-18px) rotate(8deg); } }
+@keyframes appear { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modalIn { from { opacity: 0; transform: translateY(15px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+@media (max-width: 1050px) {
+  .workspace { grid-template-columns: 1fr; }
+  .right { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .right .note { grid-column: 1 / -1; }
+}
+@media (max-width: 720px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { padding: 12px; gap: 8px; border-right: 0; border-bottom: 1px solid var(--border); }
+  .brand { padding-bottom: 6px; }
+  .brand-icon { width: 40px; height: 40px; }
+  .brand h1 { font-size: 21px; }
+  #categoryNav { display: flex; gap: 5px; overflow-x: auto; }
+  .nav-title, .quote { display: none; }
+  .nav-item { width: auto; flex-shrink: 0; white-space: nowrap; padding: 9px; }
+  .nav-count { display: none; }
+  .main { padding: 14px 11px 24px; }
+  .topbar { flex-wrap: wrap; }
+  .search { flex-basis: 100%; }
+  .welcome { flex-direction: column; align-items: flex-start; }
+  .stats { grid-template-columns: 1fr; gap: 9px; }
+  .stat { padding: 14px; }
+  .stat-number { font-size: 23px; }
+  .panel { padding: 13px; }
+  .panel-heading { align-items: flex-start; flex-direction: column; }
+  .filters { grid-template-columns: 1fr; }
+  .right { grid-template-columns: 1fr; }
+  .right .note { grid-column: auto; }
+  .item-actions .edit-btn { display: none; }
+  .item-row { gap: 7px; }
+  .item-total { font-size: 11px; }
+  .form-row { grid-template-columns: 1fr 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+</style>
+</head>
+
+<body class="theme-purple">
+<div id="backgroundDecor">
+  <div class="glow" style="top:-100px;left:25%"></div>
+  <div class="glow" style="right:-120px;top:35%"></div>
+  <div id="decorItems"></div>
+</div>
+
+<!-- TELA PARA DIGITAR E SALVAR O NOME -->
+<div class="overlay" id="welcomeOverlay" style="z-index:100">
+  <form class="modal" id="welcomeForm">
+    <div style="text-align:center;font-size:48px;margin-bottom:10px">💜</div>
+    <h3 style="text-align:center">Bem-vindo ao Lista!</h3>
+    <p style="text-align:center">Seu cantinho para organizar sonhos, compras e planos. Como podemos chamar você?</p>
+    <div class="form-group">
+      <label for="welcomeName">Seu nome</label>
+      <input id="welcomeName" maxlength="50" placeholder="Escreva seu nome..." autocomplete="given-name" required>
+    </div>
+    <button class="btn btn-primary" type="submit" style="width:100%">Entrar no meu espaço ✨</button>
+    <p style="text-align:center;font-size:11px">Seu nome fica salvo neste navegador.</p>
+  </form>
+</div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">✓</div>
+      <div><h1>Lista <span style="color:var(--accent2)">✦</span></h1><p>Organize sua vida</p></div>
+    </div>
+    <nav id="categoryNav"></nav>
+    <div class="quote">♡ Pequenos passos também são progresso.<br><span style="color:var(--accent2)">Sonhe, planeje, conquiste. ✨</span></div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <input class="search" id="globalSearch" placeholder="⌕ Buscar itens, listas ou categorias..." aria-label="Buscar">
+      <button class="btn" id="themeBtn">☾ Tema</button>
+      <button class="btn" id="backgroundBtn">🌌 Fundo</button>
+    </div>
+
+    <section class="welcome">
+      <div>
+        <div class="eyebrow">✦ SEU ESPAÇO ORGANIZADO</div>
+        <h2>Olá, <span id="userGreeting">amigo(a)</span>! <span style="color:var(--accent2)">♥</span></h2>
+        <p>Suas listas, seus planos, tudo em um só lugar.</p>
+        <button class="icon-btn" id="changeNameBtn">✎ Alterar nome</button>
+      </div>
+      <div class="date-pill" id="todayDate">📅 Hoje</div>
+    </section>
+
+    <section class="stats">
+      <div class="stat"><div class="stat-icon">▤</div><div class="stat-label">Total de itens</div><div class="stat-number" id="totalCount">0</div><div class="stat-foot">Em todas as listas</div></div>
+      <div class="stat"><div class="stat-icon" style="color:var(--good)">☑</div><div class="stat-label">Concluídos</div><div class="stat-number" id="doneCount">0</div><div class="stat-foot" id="completionText">0% concluído</div></div>
+      <div class="stat"><div class="stat-icon" style="color:var(--accent2)">＄</div><div class="stat-label">Valor pendente</div><div class="stat-number" id="pendingTotal">R$ 0,00</div><div class="stat-foot">Itens não concluídos, com desconto</div></div>
+    </section>
+
+    <div class="workspace">
+      <section class="panel">
+        <div class="panel-heading">
+          <div><h3 id="listHeading">☷ Todas as listas</h3><p id="listSubtitle">Organize seus itens aqui.</p></div>
+          <div class="actions"><button class="btn btn-primary" id="addItemBtn">＋ Adicionar item</button><button class="btn" id="addListBtn">＋ Nova lista</button></div>
+        </div>
+
+        <div class="filters">
+          <input id="localSearch" placeholder="⌕ Buscar nesta lista...">
+          <select id="categoryFilter" aria-label="Filtrar categoria"></select>
+          <select id="statusFilter" aria-label="Filtrar status"><option value="Todos">Todos os status</option><option value="pendente">Pendentes</option><option value="concluido">Concluídos</option></select>
+        </div>
+        <div class="stack" id="itemsContainer"></div>
+      </section>
+
+      <aside class="right">
+        <section class="panel budget-card">
+          <div class="panel-heading"><div><h3>◉ Meu orçamento</h3><p>Controle seus gastos</p></div><button class="icon-btn" id="editBudgetBtn">✎</button></div>
+          <div class="budget-value" id="budgetAmount">R$ 0,00</div>
+          <div class="track"><div class="bar" id="budgetProgress"></div></div>
+          <div class="budget-row"><span id="spentLabel">Total: R$ 0,00</span><span id="remainingLabel">Restante: R$ 0,00</span></div>
+          <p id="discountLabel">Desconto: 0%</p>
+          <button class="btn" id="budgetBtn" style="width:100%">Editar orçamento</button>
+        </section>
+
+        <section class="panel">
+          <h3 style="margin:0 0 12px">ϟ Acesso rápido</h3>
+          <button class="quick" id="quickAdd"><span class="quick-icon">⊕</span><span>Adicionar item<small>Registrar algo novo</small></span></button>
+          <button class="quick" id="quickList"><span class="quick-icon">☷</span><span>Minhas listas<small>Criar uma nova lista</small></span></button>
+          <button class="quick" id="quickBudget"><span class="quick-icon">＄</span><span>Meu orçamento<small>Controlar os gastos</small></span></button>
+          <button class="quick" id="exportBtn"><span class="quick-icon">⇩</span><span>Exportar dados<small>Baixar arquivo TXT</small></span></button>
+        </section>
+
+        <section class="panel note">
+          <div style="font-size:26px;color:var(--accent2)">♡ ✨</div>
+          <strong style="color:var(--text)">Um dia de cada vez.</strong>
+          <p>Organize seus planos e celebre cada pequena conquista.</p>
+          <button class="btn" id="clearCompletedBtn" style="width:100%">Limpar concluídos</button>
+        </section>
+      </aside>
+    </div>
+    <footer>Lista ✦ Seu universo de organização • Seus dados ficam neste navegador.</footer>
+  </main>
+</div>
+
+<!-- JANELA DE ITENS -->
+<div class="overlay" id="itemOverlay">
+  <form class="modal" id="itemForm">
+    <h3 id="itemModalTitle">＋ Adicionar item</h3>
+    <div class="form-group"><label for="itemName">Nome do item *</label><input id="itemName" maxlength="120" required placeholder="Ex.: Camiseta preta"></div>
+    <div class="form-row">
+      <div class="form-group"><label for="itemCategory">Categoria</label><select id="itemCategory"></select></div>
+      <div class="form-group"><label for="itemList">Lista</label><select id="itemList"></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label for="itemQuantity">Quantidade</label><input id="itemQuantity" type="number" min="1" max="99999" value="1" required></div>
+      <div class="form-group"><label for="itemPrice">Preço unitário (R$)</label><input id="itemPrice" type="number" min="0" max="99999999" step="0.01" value="0" required></div>
+    </div>
+    <div class="form-group"><label for="itemNotes">Observações (opcional)</label><textarea id="itemNotes" maxlength="500" rows="2" placeholder="Detalhes..."></textarea></div>
+    <div class="form-group"><label for="itemStatus">Status</label><select id="itemStatus"><option value="pendente">Pendente</option><option value="concluido">Concluído</option></select></div>
+    <div class="modal-actions"><button type="button" class="btn" data-close="itemOverlay">Cancelar</button><button class="btn btn-primary" type="submit">Salvar item</button></div>
+  </form>
+</div>
+
+<!-- JANELA DE LISTAS -->
+<div class="overlay" id="listOverlay">
+  <form class="modal" id="listForm">
+    <h3>＋ Criar nova lista</h3>
+    <div class="form-group"><label for="newListName">Nome da lista *</label><input id="newListName" maxlength="60" required placeholder="Ex.: Festa de aniversário"></div>
+    <div class="form-group"><label for="newListCategory">Categoria</label><select id="newListCategory"></select></div>
+    <div class="modal-actions"><button type="button" class="btn" data-close="listOverlay">Cancelar</button><button type="submit" class="btn btn-primary">Criar lista</button></div>
+  </form>
+</div>
+
+<!-- JANELA DE ORÇAMENTO -->
+<div class="overlay" id="budgetOverlay">
+  <form class="modal" id="budgetForm">
+    <h3>◉ Meu orçamento</h3>
+    <div class="form-group"><label for="budgetInput">Quanto você pode gastar? (R$)</label><input id="budgetInput" type="number" min="0" step="0.01" required></div>
+    <div class="form-group"><label for="discountInput">Desconto geral (%)</label><input id="discountInput" type="number" min="0" max="100" step="0.1" required></div>
+    <p>O desconto é aplicado ao valor dos itens pendentes. O orçamento ajuda você a acompanhar os gastos previstos.</p>
+    <div class="modal-actions"><button type="button" class="btn" data-close="budgetOverlay">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+  </form>
+</div>
+
+<!-- ESCOLHA DO FUNDO -->
+<div class="overlay" id="backgroundOverlay">
+  <div class="modal">
+    <h3>🌌 Escolha seu fundo</h3>
+    <p>Escolha o estilo do seu espaço. A seleção ficará salva neste navegador.</p>
+    <div class="color-grid">
+      <button class="theme-choice" data-theme="purple"><span class="theme-preview theme-purple-preview"></span>💜 Roxo neon</button>
+      <button class="theme-choice" data-theme="sky"><span class="theme-preview theme-sky-preview"></span>🌌 Céu azul</button>
+      <button class="theme-choice" data-theme="heart"><span class="theme-preview theme-heart-preview"></span>💗 Corações</button>
+      <button class="theme-choice" data-theme="universe"><span class="theme-preview theme-universe-preview"></span>✨ Universo</button>
+      <button class="theme-choice" data-theme="rose"><span class="theme-preview theme-rose-preview"></span>🌸 Rosa suave</button>
+      <button class="theme-choice" data-theme="black"><span class="theme-preview theme-black-preview"></span>🌑 Preto</button>
+    </div>
+    <div class="form-group" style="margin-top:20px"><label for="customAccent">Sua cor principal personalizada</label><input id="customAccent" type="color" value="#a855f7"></div>
+    <div class="form-group"><label for="customAccent2">Sua segunda cor</label><input id="customAccent2" type="color" value="#ec4899"></div>
+    <div class="modal-actions"><button class="btn" data-close="backgroundOverlay">Fechar</button><button class="btn btn-primary" id="applyCustomColors">Aplicar cores</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+const KEY = "lista_universo_app_v2";
+const NAME_KEY = "lista_nome_usuario_v2";
+
+const CATEGORIES = [
+  {name:"Compras",icon:"🛍️"},
+  {name:"Mercado",icon:"🛒"},
+  {name:"Roupas",icon:"👗"},
+  {name:"Estudos",icon:"📚"},
+  {name:"Viagem",icon:"✈️"},
+  {name:"Casa",icon:"🏠"},
+  {name:"Geral",icon:"⭐"}
+];
+
+const DEFAULT_LISTS = CATEGORIES.map((c,i)=>({
+  id:"list-default-"+i,
+  name:c.name,
+  category:c.name
+}));
+
+const DEFAULT_STATE = {
+  items:[],
+  lists:DEFAULT_LISTS,
+  budget:0,
+  discount:0,
+  theme:"purple",
+  accent:"#a855f7",
+  accent2:"#ec4899",
+  light:false,
+  activeCategory:"Todas"
+};
+
+function cloneDefault() {
+  return JSON.parse(JSON.stringify(DEFAULT_STATE));
+}
+
+function loadState() {
+  try {
+    const data = localStorage.getItem(KEY);
+    if (!data) return cloneDefault();
+    const saved = JSON.parse(data);
+    return {
+      ...cloneDefault(),
+      ...saved,
+      items:Array.isArray(saved.items)?saved.items:[],
+      lists:Array.isArray(saved.lists)?saved.lists:cloneDefault().lists
+    };
+  } catch {
+    return cloneDefault();
+  }
+}
+
+let state = loadState();
+let editingId = null;
+let toastTimer = null;
+
+function saveState() {
+  try {
+    localStorage.setItem(KEY,JSON.stringify(state));
+  } catch {
+    showToast("Não foi possível salvar neste navegador.");
+  }
+}
+
+function id() {
+  return Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[c]);
+}
+
+function money(value) {
+  return Number(value||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+}
+
+function categoryInfo(name) {
+  return CATEGORIES.find(c=>c.name===name)||{name,icon:"📌"};
+}
+
+function showToast(message) {
+  $("toast").textContent=message;
+  $("toast").classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2600);
+}
+
+function openModal(name) {
+  $(name).classList.add("open");
+}
+
+function closeModal(name) {
+  $(name).classList.remove("open");
+}
+
+/* NOME DO USUÁRIO: SALVAR E RECUPERAR */
+function getUserName() {
+  try { return localStorage.getItem(NAME_KEY)||""; }
+  catch { return ""; }
+}
+
+function showWelcome() {
+  const name=getUserName();
+  if (name) {
+    $("userGreeting").textContent=name;
+    $("welcomeOverlay").classList.remove("open");
+  } else {
+    $("welcomeOverlay").classList.add("open");
+    setTimeout(()=>$("welcomeName").focus(),100);
+  }
+}
+
+$("welcomeForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  const name=$("welcomeName").value.trim();
+  if (!name) return;
+  try {
+    localStorage.setItem(NAME_KEY,name);
+  } catch {
+    showToast("Não foi possível guardar o nome neste navegador.");
+    return;
+  }
+  $("userGreeting").textContent=name;
+  closeModal("welcomeOverlay");
+  showToast("Bem-vindo(a), "+name+"! 💜");
+});
+
+$("changeNameBtn").addEventListener("click",()=>{
+  $("welcomeName").value=getUserName();
+  openModal("welcomeOverlay");
+  setTimeout(()=>$("welcomeName").focus(),50);
+});
+
+/* FUNDOS E CORES */
+function applyAppearance() {
+  document.body.classList.remove(
+    "theme-purple","theme-sky","theme-heart",
+    "theme-universe","theme-rose","theme-black"
+  );
+  document.body.classList.add("theme-"+state.theme);
+  document.body.classList.toggle("light",!!state.light);
+
+  document.documentElement.style.setProperty("--accent",state.accent);
+  document.documentElement.style.setProperty("--accent2",state.accent2);
+  $("themeBtn").textContent=state.light?"☀ Tema claro":"☾ Tema escuro";
+
+  document.querySelectorAll("[data-theme]").forEach(button=>{
+    button.classList.toggle("selected",button.dataset.theme===state.theme);
+  });
+
+  renderDecor();
+}
+
+function renderDecor() {
+  const container=$("decorItems");
+  let symbols=[];
+  if (state.theme==="sky") symbols=["✦","·","✧","⋆","·","✦","⋆","✧"];
+  else if (state.theme==="heart" || state.theme==="rose") symbols=["♡","♥","♡","♥","♡","♥"];
+  else if (state.theme==="universe") symbols=["✦","✧","☄","⋆","✦","✧","⋆","·"];
+  else if (state.theme==="purple") symbols=["✦","♡","✧","⋆","✦","·"];
+  else symbols=["·","✧","·","✦"];
+
+  container.innerHTML=symbols.map((symbol,i)=>`
+    <span class="decor" style="
+      left:${(i*17+7)%97}%;
+      top:${(i*23+9)%92}%;
+      font-size:${14+(i%4)*8}px;
+      animation-delay:${i*.6}s;
+      color:${i%2?"var(--accent2)":"var(--accent)"};
+    ">${symbol}</span>
+  `).join("");
+}
+
+$("backgroundBtn").addEventListener("click",()=>{
+  $("customAccent").value=state.accent;
+  $("customAccent2").value=state.accent2;
+  openModal("backgroundOverlay");
+});
+
+document.querySelectorAll("[data-theme]").forEach(button=>{
+  button.addEventListener("click",()=>{
+    state.theme=button.dataset.theme;
+    const presets={
+      purple:["#a855f7","#ec4899"],
+      sky:["#258bff","#52d8ff"],
+      heart:["#ff4fa3","#ff9acb"],
+      universe:["#8b5cf6","#43d9ff"],
+      rose:["#ed5fa8","#ffb2d5"],
+      black:["#c5a3ff","#f5f5f5"]
+    };
+    [state.accent,state.accent2]=presets[state.theme];
+    applyAppearance();
+    saveState();
+    showToast("Fundo atualizado! ✨");
+  });
+});
+
+$("applyCustomColors").addEventListener("click",()=>{
+  state.accent=$("customAccent").value;
+  state.accent2=$("customAccent2").value;
+  applyAppearance();
+  saveState();
+  closeModal("backgroundOverlay");
+  showToast("Suas cores foram aplicadas! 🎨");
+});
+
+$("themeBtn").addEventListener("click",()=>{
+  state.light=!state.light;
+  applyAppearance();
+  saveState();
+});
+
+/* CATEGORIAS E LISTAS */
+function fillCategories(select,all=false) {
+  select.innerHTML=(all?'<option value="Todas">Todas as categorias</option>':"")+
+    CATEGORIES.map(c=>`<option value="${escapeHTML(c.name)}">${c.icon} ${escapeHTML(c.name)}</option>`).join("");
+}
+
+function renderNav() {
+  const nav=[
+    {name:"Todas",label:"Todas as listas",icon:"☷",count:state.items.length},
+    ...CATEGORIES.map(c=>({
+      name:c.name,label:c.name,icon:c.icon,
+      count:state.items.filter(i=>i.category===c.name).length
+    }))
+  ];
+
+  $("categoryNav").innerHTML=
+    '<div class="nav-title">Categorias</div>'+
+    nav.map(n=>`
+      <button class="nav-item ${state.activeCategory===n.name?"active":""}" data-cat="${escapeHTML(n.name)}">
+        <span class="nav-icon">${n.icon}</span><span>${escapeHTML(n.label)}</span><span class="nav-count">${n.count}</span>
+      </button>
+    `).join("")+
+    '<div class="nav-title">Minhas listas</div>'+
+    state.lists.map(list=>`
+      <button class="nav-item ${state.activeCategory==="list:"+list.id?"active":""}" data-list="${escapeHTML(list.id)}">
+        <span class="nav-icon">▣</span><span>${escapeHTML(list.name)}</span>
+        <span class="nav-count">${state.items.filter(i=>i.listId===list.id).length}</span>
+      </button>
+    `).join("");
+
+  $("categoryNav").querySelectorAll("[data-cat]").forEach(button=>{
+    button.addEventListener("click",()=>{
+      state.activeCategory=button.dataset.cat;
+      render();
+    });
+  });
+
+  $("categoryNav").querySelectorAll("[data-list]").forEach(button=>{
+    button.addEventListener("click",()=>{
+      state.activeCategory="list:"+button.dataset.list;
+      render();
+    });
+  });
+}
+
+/* ESTATÍSTICAS E ORÇAMENTO */
+function renderStats() {
+  const total=state.items.length;
+  const done=state.items.filter(i=>i.done).length;
+  const pending=state.items.filter(i=>!i.done);
+  const pendingSum=pending.reduce((s,i)=>s+i.quantity*i.price,0);
+  const discounted=pendingSum*(1-state.discount/100);
+  const percent=total?Math.round(done/total*100):0;
+
+  $("totalCount").textContent=total;
+  $("doneCount").textContent=done;
+  $("completionText").textContent=percent+"% concluído";
+  $("pendingTotal").textContent=money(discounted);
+
+  const allSum=state.items.reduce((s,i)=>s+i.quantity*i.price,0);
+  const remaining=state.budget-allSum;
+  const ratio=state.budget>0?Math.min(100,allSum/state.budget*100):0;
+
+  $("budgetAmount").textContent=money(state.budget);
+  $("spentLabel").textContent="Total previsto: "+money(allSum);
+  $("remainingLabel").textContent="Restante: "+money(remaining);
+  $("remainingLabel").style.color=remaining<0?"var(--danger)":"";
+  $("budgetProgress").style.width=ratio+"%";
+  $("budgetProgress").style.background=allSum>state.budget&&state.budget>0
+    ?"var(--danger)":"linear-gradient(90deg,var(--good),var(--accent))";
+  $("discountLabel").textContent="Desconto: "+state.discount+"%";
+}
+
+/* ITENS */
+function renderItems() {
+  const query=($("localSearch").value+" "+$("globalSearch").value).trim().toLocaleLowerCase("pt-BR");
+  const status=$("statusFilter").value;
+  const category=$("categoryFilter").value;
+  let items=[...state.items];
+
+  if (state.activeCategory!=="Todas") {
+    if (state.activeCategory.startsWith("list:")) {
+      items=items.filter(i=>i.listId===state.activeCategory.slice(5));
+    } else {
+      items=items.filter(i=>i.category===state.activeCategory);
+    }
+  }
+
+  if (category!=="Todas") items=items.filter(i=>i.category===category);
+  if (status==="pendente") items=items.filter(i=>!i.done);
+  if (status==="concluido") items=items.filter(i=>i.done);
+
+  if (query) items=items.filter(i=>{
+    const list=state.lists.find(l=>l.id===i.listId);
+    return [i.name,i.category,i.notes,list?.name||""].join(" ").toLocaleLowerCase("pt-BR").includes(query);
+  });
+
+  const activeList=state.activeCategory.startsWith("list:")
+    ?state.lists.find(l=>l.id===state.activeCategory.slice(5)):null;
+
+  $("listHeading").textContent=activeList?"▣ "+activeList.name:
+    state.activeCategory==="Todas"?"☷ Todas as listas":
+    categoryInfo(state.activeCategory).icon+" "+state.activeCategory;
+  $("listSubtitle").textContent=items.length
+    ?items.length+(items.length===1?" item encontrado":" itens encontrados")
+    :"Adicione itens para organizar seus planos.";
+
+  if (!items.length) {
+    $("itemsContainer").innerHTML=`
+      <div class="empty"><span>✦</span><strong>Nada por aqui ainda</strong><br>
+      Adicione seu primeiro item para começar.<br><br>
+      <button class="btn btn-primary" id="emptyAdd">＋ Adicionar item</button></div>`;
+    $("emptyAdd").addEventListener("click",()=>openItemModal());
+    return;
+  }
+
+  $("itemsContainer").innerHTML=items.map(item=>{
+    const cat=categoryInfo(item.category);
+    const list=state.lists.find(l=>l.id===item.listId);
+    return `<article class="item ${item.done?"done":""}">
+      <div class="item-row">
+        <input class="check" type="checkbox" data-toggle="${escapeHTML(item.id)}" ${item.done?"checked":""} aria-label="Concluir item">
+        <div class="item-info">
+          <div class="item-name">${escapeHTML(item.name)}</div>
+          <div class="item-meta">${cat.icon} ${escapeHTML(item.category)} · ${item.quantity} un. · ${escapeHTML(list?.name||"Lista")}${item.notes?" · "+escapeHTML(item.notes):""}</div>
+        </div>
+        <div class="item-total">${money(item.quantity*item.price)}<small>${money(item.price)} / unidade</small></div>
+        <div class="item-actions">
+          <button class="icon-btn edit-btn" data-edit="${escapeHTML(item.id)}" title="Editar">✎</button>
+          <button class="icon-btn" data-delete="${escapeHTML(item.id)}" title="Excluir">×</button>
+        </div>
+      </div>
+    </article>`;
+  }).join("");
+
+  $("itemsContainer").querySelectorAll("[data-toggle]").forEach(input=>{
+    input.addEventListener("change",()=>{
+      const item=state.items.find(i=>i.id===input.dataset.toggle);
+      if (!item) return;
+      item.done=input.checked;
+      render();
+      showToast(item.done?"Item concluído! ✓":"Item voltou para pendentes.");
+    });
+  });
+
+  $("itemsContainer").querySelectorAll("[data-edit]").forEach(button=>{
+    button.addEventListener("click",()=>openItemModal(button.dataset.edit));
+  });
+
+  $("itemsContainer").querySelectorAll("[data-delete]").forEach(button=>{
+    button.addEventListener("click",()=>{
+      const item=state.items.find(i=>i.id===button.dataset.delete);
+      if (!item||!confirm('Deseja excluir "'+item.name+'"?')) return;
+      state.items=state.items.filter(i=>i.id!==item.id);
+      render();
+      showToast("Item excluído.");
+    });
+  });
+}
+
+function render() {
+  applyAppearance();
+  renderNav();
+  renderStats();
+  renderItems();
+  saveState();
+}
+
+/* ABRIR JANELAS */
+function openItemModal(itemId=null) {
+  editingId=itemId;
+  fillCategories($("itemCategory"));
+  $("itemList").innerHTML=state.lists.map(l=>`<option value="${escapeHTML(l.id)}">${escapeHTML(l.name)}</option>`).join("");
+
+  const item=itemId?state.items.find(i=>i.id===itemId):null;
+  $("itemModalTitle").textContent=item?"✎ Editar item":"＋ Adicionar item";
+  $("itemName").value=item?.name||"";
+  $("itemCategory").value=item?.category||
+    (CATEGORIES.some(c=>c.name===state.activeCategory)?state.activeCategory:"Compras");
+  $("itemList").value=item?.listId||
+    (state.activeCategory.startsWith("list:")?state.activeCategory.slice(5):
+    state.lists.find(l=>l.category===state.activeCategory)?.id||state.lists[0]?.id||"");
+  $("itemQuantity").value=item?.quantity??1;
+  $("itemPrice").value=item?.price??0;
+  $("itemNotes").value=item?.notes||"";
+  $("itemStatus").value=item?.done?"concluido":"pendente";
+  openModal("itemOverlay");
+  setTimeout(()=>$("itemName").focus(),50);
+}
+
+function openListModal() {
+  fillCategories($("newListCategory"));
+  $("newListName").value="";
+  $("newListCategory").value=CATEGORIES.some(c=>c.name===state.activeCategory)?state.activeCategory:"Geral";
+  openModal("listOverlay");
+}
+
+function openBudgetModal() {
+  $("budgetInput").value=state.budget;
+  $("discountInput").value=state.discount;
+  openModal("budgetOverlay");
+}
+
+/* SALVAR ITEM */
+$("itemForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  const name=$("itemName").value.trim();
+  const quantity=Number($("itemQuantity").value);
+  const price=Number($("itemPrice").value);
+  const listId=$("itemList").value;
+
+  if (!name) return showToast("Digite o nome do item.");
+  if (!Number.isFinite(quantity)||quantity<1) return showToast("Digite uma quantidade válida.");
+  if (!Number.isFinite(price)||price<0) return showToast("Digite um preço válido.");
+  if (!state.lists.some(l=>l.id===listId)) return showToast("Escolha uma lista.");
+
+  const old=editingId?state.items.find(i=>i.id===editingId):null;
+  const item={
+    id:old?.id||id(),name,quantity,price,listId,
+    category:$("itemCategory").value,
+    notes:$("itemNotes").value.trim(),
+    done:$("itemStatus").value==="concluido",
+    createdAt:old?.createdAt||new Date().toISOString()
+  };
+
+  if (old) state.items=state.items.map(i=>i.id===old.id?item:i);
+  else state.items.unshift(item);
+
+  state.activeCategory="Todas";
+  closeModal("itemOverlay");
+  render();
+  showToast(old?"Item atualizado!":"Item adicionado com sucesso!");
+});
+
+/* CRIAR LISTA */
+$("listForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  const name=$("newListName").value.trim();
+  if (!name) return;
+  if (state.lists.some(l=>l.name.toLocaleLowerCase("pt-BR")===name.toLocaleLowerCase("pt-BR"))) {
+    return showToast("Já existe uma lista com esse nome.");
+  }
+  const list={id:id(),name,category:$("newListCategory").value};
+  state.lists.push(list);
+  state.activeCategory="list:"+list.id;
+  closeModal("listOverlay");
+  render();
+  showToast("Lista criada! ✨");
+});
+
+/* ORÇAMENTO */
+$("budgetForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  const budget=Number($("budgetInput").value);
+  const discount=Number($("discountInput").value);
+  if (!Number.isFinite(budget)||budget<0) return showToast("Orçamento inválido.");
+  if (!Number.isFinite(discount)||discount<0||discount>100) return showToast("O desconto deve ficar entre 0 e 100%.");
+  state.budget=budget;
+  state.discount=discount;
+  closeModal("budgetOverlay");
+  render();
+  showToast("Orçamento atualizado!");
+});
+
+/* BOTÕES */
+$("addItemBtn").addEventListener("click",()=>openItemModal());
+$("quickAdd").addEventListener("click",()=>openItemModal());
+$("addListBtn").addEventListener("click",openListModal);
+$("quickList").addEventListener("click",openListModal);
+$("budgetBtn").addEventListener("click",openBudgetModal);
+$("editBudgetBtn").addEventListener("click",openBudgetModal);
+$("quickBudget").addEventListener("click",openBudgetModal);
+
+$("localSearch").addEventListener("input",renderItems);
+$("globalSearch").addEventListener("input",renderItems);
+$("statusFilter").addEventListener("change",renderItems);
+
+fillCategories($("categoryFilter"),true);
+$("categoryFilter").addEventListener("change",renderItems);
+
+$("clearCompletedBtn").addEventListener("click",()=>{
+  const done=state.items.filter(i=>i.done).length;
+  if (!done) return showToast("Não há itens concluídos.");
+  if (!confirm("Excluir os "+done+" itens concluídos?")) return;
+  state.items=state.items.filter(i=>!i.done);
+  render();
+  showToast("Itens concluídos removidos.");
+});
+
+/* EXPORTAR PARA ARQUIVO TXT */
+$("exportBtn").addEventListener("click",()=>{
+  const lines=["MINHAS LISTAS","Exportado em: "+new Date().toLocaleString("pt-BR"),""];
+
+  for (const list of state.lists) {
+    lines.push("LISTA: "+list.name+" ("+list.category+")");
+    const items=state.items.filter(i=>i.listId===list.id);
+    if (!items.length) lines.push("  Nenhum item.");
+    items.forEach(i=>{
+      lines.push(`[${i.done?"X":" "}] ${i.name} | Quantidade: ${i.quantity} | Unitário: ${money(i.price)} | Total: ${money(i.quantity*i.price)}`);
+      if (i.notes) lines.push("  Observações: "+i.notes);
+    });
+    lines.push("");
+  }
+
+  lines.push("Orçamento: "+money(state.budget));
+  lines.push("Desconto: "+state.discount+"%");
+  const blob=new Blob(["\uFEFF"+lines.join("\n")],{type:"text/plain;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="minhas-listas.txt";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  showToast("Arquivo exportado!");
+});
+
+/* FECHAR JANELAS */
+document.querySelectorAll("[data-close]").forEach(button=>{
+  button.addEventListener("click",()=>closeModal(button.dataset.close));
+});
+
+document.querySelectorAll(".overlay").forEach(overlay=>{
+  overlay.addEventListener("click",event=>{
+    if (event.target===overlay && overlay.id!=="welcomeOverlay") closeModal(overlay.id);
+  });
+});
+
+document.addEventListener("keydown",event=>{
+  if (event.key==="Escape") {
+    document.querySelectorAll(".overlay.open").forEach(overlay=>{
+      if (overlay.id!=="welcomeOverlay") closeModal(overlay.id);
+    });
+  }
+});
+
+$("todayDate").textContent="📅 "+new Date().toLocaleDateString("pt-BR",{
+  weekday:"long",day:"numeric",month:"long",year:"numeric"
+});
+
+applyAppearance();
+render();
+showWelcome();
+</script>
+</body>
+</html>
