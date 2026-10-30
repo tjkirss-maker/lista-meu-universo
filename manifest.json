@@ -1,0 +1,13 @@
+
+{
+  "id": "./",
+  "name": "Lista ✦ Meu Universo",
+  "short_name": "Minha Lista",
+  "description": "Meu aplicativo pessoal de listas e orçamento",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#151020",
+  "theme_color": "#151020",
+  "icons": []
+}
